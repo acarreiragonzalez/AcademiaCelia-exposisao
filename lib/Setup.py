@@ -8,6 +8,6 @@ setup(name="Academia Celia",
       url="http://google.es",
       license="GPL",
       scripts=["Main.py"],
-      py_modules=["BaseDatos.py"]
+
 
       )

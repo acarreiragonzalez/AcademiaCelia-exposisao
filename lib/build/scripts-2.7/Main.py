@@ -45,8 +45,7 @@ class Main:
 
 
 
-        self.rojo = Gdk.RGBA()
-        self.rojo.parse("Red")
+
 
 
 
@@ -73,7 +72,8 @@ class Main:
         self.treeview = Gtk.TreeView()  # Tabla donde se volcan os resultados da base sqlite
         self.buscar = Gtk  # Buscar Alumno
 
-        self.editar = Gtk  # Editar Alumno
+
+        self.editar = Gtk  # Editar Alumno guay
         self.insertar = Gtk  # Insertar Alumno
         self.id = Gtk  # Primary key
         self.ventana = Gtk
@@ -87,7 +87,7 @@ class Main:
         self.ventana.set_resizable(False)
         self.ventana.set_title("Academia Celia")
         self.ventana.set_icon_from_file("../img/iconoVentana.jpg")
-        # self.ventana.set_icon("../img/iconoVentana.jpg")
+
 
 
         # Caixa donde irá contida a imaxen de fondo
@@ -138,18 +138,18 @@ class Main:
         self.toolbar.insert(self.borrar, 3)
 
 
-        # Creamos dos scrollwindows.
+        # Creamos dous scrollwindows.
 
 
-        self.scroll1 = Gtk.ScrolledWindow()
-        self.scroll1.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
-        self.layout2.pack_end(self.scroll1, True, True, 0)
+        self.scrollwidgets = Gtk.ScrolledWindow()
+        self.scrollwidgets.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
+        self.layout2.pack_end(self.scrollwidgets, True, True, 0)
 
 
-        self.scroll2 = Gtk.ScrolledWindow()
-        self.scroll2.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        self.panel.add2(self.scroll2)
-        self.scroll2.add(self.treeview)
+        self.scrolltree = Gtk.ScrolledWindow()
+        self.scrolltree.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.panel.add2(self.scrolltree)
+        self.scrolltree.add(self.treeview)
 
         #Executamos o treeview que contén todo no mesmo inicio do programa
         self.cargar_treeview()
@@ -190,11 +190,16 @@ class Main:
         aplicarCambios = builder.get_object("apply")
         self.bot_banner.set_from_file("../glade/axudaimg/engadir.jpg")
 
+
+
+
+
+
         for i in range (7):
             label = builder.get_object(str(i))
             self.camposdeTexto.append(label)
 
-        self.scroll1.add(self.insertar)
+        self.scrollwidgets.add(self.insertar)
         signal ={"on_apply_clicked": self.on_apply_clicked}
         builder.connect_signals(signal)
 
@@ -243,7 +248,7 @@ class Main:
                 self.camposdeTexto.append(label)
             print(self.camposdeTexto)
 
-            self.scroll1.add(self.editar)
+            self.scrollwidgets.add(self.editar)
             signal = {"on_modify_clicked": self.on_modify_clicked}
             builder.connect_signals(signal)
 
@@ -278,7 +283,7 @@ class Main:
         self.camposdeTexto.append(label)
         print(self.camposdeTexto)
 
-        self.scroll1.add(self.buscar)
+        self.scrollwidgets.add(self.buscar)
         signal = {"on_find_clicked": self.on_find_clicked,
                   "on_back_clicked": self.on_back_clicked}
         builder.connect_signals(signal)

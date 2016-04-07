@@ -13,11 +13,15 @@ from reportlab.lib import colors
 
 import sqlite3 as dbapi
 
-bbdd = dbapi.connect("basedatos.bd")
+bbdd = dbapi.connect("BASEALUMNOs")
 cursor = bbdd.cursor()
 
 cursor.execute("select * from alumnos")
 taboaBaseDatos = []
+
+sup = ["ID","Nome","Apelido1","Apelido2","Telefono","Horario","Observacion"]
+
+taboaBaseDatos.append(sup)
 
 for fila in cursor:
     taboaBaseDatos.append(fila)

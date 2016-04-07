@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from BaseDatos import BaseDatos
+from DB import BaseDatos
 from gi.repository import Gtk, Gdk
 import gi
 from reportlab.pdfgen import canvas
@@ -71,7 +71,8 @@ class Main:
         self.bd = BaseDatos()  # Obxeto que  contén a taboa sqlite
         self.treeview = Gtk.TreeView()  # Tabla donde se volcan os resultados da base sqlite
         self.buscar = Gtk  # Buscar Alumno
-        self.aux
+        self.comprobacion=bool
+
 
         self.editar = Gtk  # Editar Alumno guay
         self.insertar = Gtk  # Insertar Alumno
@@ -79,15 +80,15 @@ class Main:
         self.ventana = Gtk
         self.fillo = None
         self.aux = []
-        self.camposdeTexto = []  # Labels dos arquivos .glade
+        self.camposIntroducidos = []  # Labels dos arquivos .glade
         # Venta principal
 
         self.ventana = Gtk.Window()
         self.ventana.connect("delete-event", Gtk.main_quit)
         self.ventana.set_resizable(False)
         self.ventana.set_title("Academia Celia")
-        self.ventana.set_icon_from_file("../img/iconoVentana.jpg")
-        # self.ventana.set_icon("../img/iconoVentana.jpg")
+
+
 
 
         # Caixa donde irá contida a imaxen de fondo
@@ -138,18 +139,18 @@ class Main:
         self.toolbar.insert(self.borrar, 3)
 
 
-        # Creamos dos scrollwindows.
+        # Creamos dous scrollwindows.
 
 
-        self.scroll1 = Gtk.ScrolledWindow()
-        self.scroll1.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
-        self.layout2.pack_end(self.scroll1, True, True, 0)
+        self.scrollwidgets = Gtk.ScrolledWindow()
+        self.scrollwidgets.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
+        self.layout2.pack_end(self.scrollwidgets, True, True, 0)
 
 
-        self.scroll2 = Gtk.ScrolledWindow()
-        self.scroll2.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        self.panel.add2(self.scroll2)
-        self.scroll2.add(self.treeview)
+        self.scrolltree = Gtk.ScrolledWindow()
+        self.scrolltree.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.panel.add2(self.scrolltree)
+        self.scrolltree.add(self.treeview)
 
         #Executamos o treeview que contén todo no mesmo inicio do programa
         self.cargar_treeview()
@@ -190,11 +191,16 @@ class Main:
         aplicarCambios = builder.get_object("apply")
         self.bot_banner.set_from_file("../glade/axudaimg/engadir.jpg")
 
+
+
+
+
+
         for i in range (7):
             label = builder.get_object(str(i))
-            self.camposdeTexto.append(label)
+            self.camposIntroducidos.append(label)
 
-        self.scroll1.add(self.insertar)
+        self.scrollwidgets.add(self.insertar)
         signal ={"on_apply_clicked": self.on_apply_clicked}
         builder.connect_signals(signal)
 
@@ -207,7 +213,7 @@ class Main:
         if treeiter != None:
             self.id = model[treeiter][0]
             self.bd.borrarAlumno(self.id)
-            self.reloadAlumnos()  # Refresh del contenido del treeview
+            self.reloadAlumnos()  # Actualizamos o contido do treeview
             self.bot_banner.set_from_file("../glade/axudaimg/borrar.jpg")
     # Modificar Alumno
     def on_apply_clicked(self, widget):
@@ -215,13 +221,13 @@ class Main:
         """Metodo que modifica valores dun alumno xa insertado na DB"""
 
         self.verificarAlumno(3, 4)
-        if self.todo_ok:
-            for texto in self.camposdeTexto:
+        if self.comprobacion:
+            for texto in self.camposIntroducidos:
                 self.aux.append(texto.get_text())
             self.bd.insertarAlumno(self.aux)
             self.reloadAlumnos()
             self.insertar.destroy()
-            self.camposdeTexto.clear()
+            self.camposIntroducidos.clear()
             self.aux.clear()
     def editarAl(self, widget):
         if self.fillo:
@@ -240,22 +246,22 @@ class Main:
             self.bot_banner.set_from_file("../glade/axudaimg/editar.jpg")
             for i in range(6):  # Añadimos los 6 labels que tiene (No tiene el label DNI)
                 label = builder.get_object(str(i))
-                self.camposdeTexto.append(label)
-            print(self.camposdeTexto)
+                self.camposIntroducidos.append(label)
+            print(self.camposIntroducidos)
 
-            self.scroll1.add(self.editar)
+            self.scrollwidgets.add(self.editar)
             signal = {"on_modify_clicked": self.on_modify_clicked}
             builder.connect_signals(signal)
 
 
     def on_modify_clicked(self, widget):
-        for texto in self.camposdeTexto:
+        for texto in self.camposIntroducidos:
             self.aux.append(texto.get_text())
 
         self.bd.modificarDatosAlumno(self.id, self.aux)
         self.reloadAlumnos()
         self.editar.destroy()
-        self.camposdeTexto.clear()
+        self.camposIntroducidos.clear()
         self.aux.clear()
 
     #Buscar Alumno
@@ -275,17 +281,17 @@ class Main:
         back = builder.get_object("back")
         self.bot_banner.set_from_file("../glade/axudaimg/buscar.jpg")
         label = builder.get_object("0")
-        self.camposdeTexto.append(label)
-        print(self.camposdeTexto)
+        self.camposIntroducidos.append(label)
+        print(self.camposIntroducidos)
 
-        self.scroll1.add(self.buscar)
+        self.scrollwidgets.add(self.buscar)
         signal = {"on_find_clicked": self.on_find_clicked,
                   "on_back_clicked": self.on_back_clicked}
         builder.connect_signals(signal)
 
     def on_find_clicked(self, widget):
         self.model.clear()
-        for i in self.camposdeTexto:
+        for i in self.camposIntroducidos:
             self.id = i.get_text()
             #Busqueda da fila segundo o seu ID que lle especifiquemos
         datos = self.bd.buscarAlumno(self.id)
@@ -293,7 +299,7 @@ class Main:
             self.model.append(fila)
 
         self.treeview.set_model(self.model)
-        self.camposdeTexto.clear()
+        self.camposIntroducidos.clear()
     def on_back_clicked(self, widget):
         self.reloadAlumnos()
         self.buscar.destroy()
@@ -339,7 +345,7 @@ class Main:
         self.numero_OK = bool
         self.claveid = int
         for contador, obj in enumerate(
-                self.camposdeTexto):
+                self.camposIntroducidos):
             texto = obj.get_text()
             if contador == pos1:
                 self.claveid = self.bd.coincidenciaClave(texto)
@@ -355,17 +361,9 @@ class Main:
 
 
         if self.numero_OK == True and self.claveid == 0:
-            self.todo_ok = True
+            self.comprobacion = True
         else:
-            self.todo_ok = False
-
-    #Metodo que limita a entrada de datos ao tipo de datos que son
-    def verificar_num(self, texto, pos):
-        perfect = True
-        numeros = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-        for i in texto:
-            if i not in numeros:
-                perfect = False
+            self.comprobacion = False
 
 
 
@@ -375,7 +373,9 @@ class Main:
 
 
 
-            return False
+
+
+
 #Mensaxe de erro por inconcluencia de tipo de valor en algún campo
     def erro(self, mensaxe):
         vent_emergente = Gtk.Window(title="System Critical Error,Warning,Its explosive")

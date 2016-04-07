@@ -13,7 +13,7 @@ from reportlab.lib import colors
 
 import sqlite3 as dbapi
 
-bbdd = dbapi.connect("basedatos.bd")
+bbdd = dbapi.connect("BASEALUMNOs")
 cursor = bbdd.cursor()
 
 cursor.execute("select * from alumnos")

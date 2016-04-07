@@ -5,7 +5,7 @@ import sqlite3
 class BaseDatos:
     #Establecemos conexion e engadimos un cursor que percorrerá os valores
     def __init__(self):
-        self.conec = sqlite3.connect("basedatos.bd")
+        self.conec = sqlite3.connect("BASEALUMNOs")
         self.c = self.conec.cursor()
 
     def borrarTablaAlumnos(self): #En caso de necesitar borrar la tabla.
